@@ -1,0 +1,24 @@
+<VideoScreen>:
+    name: "video"
+
+    FloatLayout:
+        PatternBackground:
+            id: background
+            size: root.size
+            pos: root.pos
+
+        Image:
+            id: camera_view
+            size_hint: (1, 0.9)
+            pos_hint: {"top": 1}
+            allow_stretch: True
+            keep_ratio: True
+
+        MDLabel:
+            id: status_label
+            text: ""
+            size_hint: (1, 0.1)
+            pos_hint: {"x": 0, "y": 0}
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
