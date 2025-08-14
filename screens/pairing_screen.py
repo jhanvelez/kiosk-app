@@ -17,6 +17,7 @@ class PairingScreen(MDScreen):
         result = pair_device(code)
         if result:
             save_config({
+                "kiosk_id": result["kiosk_id"],
                 "name": result["name"],
                 "location": result["location"],
                 "description": result["description"],

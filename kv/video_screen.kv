@@ -3,22 +3,43 @@
 
     FloatLayout:
         PatternBackground:
-            id: background
             size: root.size
             pos: root.pos
 
-        Image:
-            id: camera_view
-            size_hint: (1, 0.9)
-            pos_hint: {"top": 1}
-            allow_stretch: True
-            keep_ratio: True
+        # Contenedor del video con margen
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: (0.9, 0.9)  # márgenes laterales
+            pos_hint: {"center_x": 0.5, "top": 1}
 
+            # Contador regresivo
+            MDLabel:
+                id: countdown_label
+                text: str(root.countdown_time)
+                font_style: "H4"
+                halign: "center"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                size_hint: None, None
+                size: 120, 120
+                pos_hint: {"center_x": 0.5, "top": 1}
+
+            # Vista de la cámara
+            Image:
+                id: camera_view
+                allow_stretch: True
+                keep_ratio: True
+                size_hint: 1, 0.8
+                pos_hint: {"center_x": 0.5, "y": 0}
+
+        # Mensaje de estado en la parte inferior
         MDLabel:
             id: status_label
             text: ""
+            font_style: "H5"
             size_hint: (1, 0.1)
             pos_hint: {"x": 0, "y": 0}
             halign: "center"
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
+            border_radius: [10, 10, 10, 10]

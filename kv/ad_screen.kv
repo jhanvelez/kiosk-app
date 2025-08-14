@@ -1,0 +1,21 @@
+<AdScreen>:
+    name: "ads"
+
+    FloatLayout:
+        PatternBackground:
+            size: root.size
+            pos: root.pos
+
+        BoxLayout:
+            id: ad_container
+            orientation: "vertical"
+            size_hint: 0.9, 0.9
+            radius: [24,24,24,24]
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            padding: 20
+            canvas.before:
+                Color:
+                    rgba: 1,1,1,0.08
+                Rectangle:
+                    pos: self.pos
+                    size: self.size

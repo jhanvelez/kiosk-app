@@ -1,17 +1,23 @@
+import io
+import random
+import cairosvg
+
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.graphics import Color, Rectangle, PushMatrix, PopMatrix, Rotate
+from kivy.graphics.texture import Texture
+from PIL import Image as PILImage
 from kivy.uix.image import Image
-from kivy.graphics import Color, Rectangle
 from kivy.clock import Clock
 from kivy.metrics import dp
-import cairosvg
-import io
-from PIL import Image as PILImage
+
 
 class SvgImage(Image):
-    def __init__(self, source=None, **kwargs):
+    def __init__(self, source=None, angle=0, **kwargs):
         super().__init__(**kwargs)
+        self.angle = angle
         if source:
             self.set_source(source)
+        self.bind(pos=self.update_rotation, size=self.update_rotation)
 
     def set_source(self, value):
         svg_data = open(value, 'rb').read()
@@ -24,25 +30,63 @@ class SvgImage(Image):
 
         self.texture = texture
 
+    def update_rotation(self, *args):
+        self.canvas.before.clear()
+        self.canvas.after.clear()
+        with self.canvas.before:
+            PushMatrix()
+            Rotate(angle=self.angle, origin=self.center)
+        with self.canvas.after:
+            PopMatrix()
+
+
 class PatternBackground(RelativeLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        # Fondo rojo sólido
+        with self.canvas.before:
+            Color(221 / 255, 83 / 255, 64 / 255, 1)  # Rojo
+            self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+
+        self.bind(size=self._update_background, pos=self._update_background)
         Clock.schedule_once(self.add_icons, 0.1)
+
+    def _update_background(self, *args):
+        self.bg_rect.size = self.size
+        self.bg_rect.pos = self.pos
 
     def add_icons(self, *args):
         spacing = dp(120)
         for i in range(0, int(self.width), int(spacing)):
             for j in range(0, int(self.height), int(spacing)):
-                icon = SvgImage(source="assets/icons/good.svg")
+
+                # good.svg
+                icon = SvgImage(
+                    source="assets/icons/good.svg",
+                    angle=random.uniform(-15, 15)
+                )
                 icon.size_hint = (None, None)
                 icon.size = (dp(50), dp(50))
                 icon.pos = (i, j)
-                icon.color = [1, 1, 0, 0.1]
                 self.add_widget(icon)
 
-                icon2 = SvgImage(source="assets/icons/good.svg")
+                # party.svg
+                icon2 = SvgImage(
+                    source="assets/icons/party.svg",
+                    angle=random.uniform(-15, 15)
+                )
                 icon2.size_hint = (None, None)
                 icon2.size = (dp(50), dp(50))
                 icon2.pos = (i + dp(60), j + dp(60))
-                icon2.color = [1, 1, 0, 0.1]
                 self.add_widget(icon2)
+
+                # music.svg
+                icon3 = SvgImage(
+                    source="assets/icons/music.svg",
+                    angle=random.uniform(-15, 15)
+                )
+                icon3.size_hint = (None, None)
+                icon3.size = (dp(50), dp(50))
+                icon3.pos = (i + dp(60), j + dp(30))
+                self.add_widget(icon3)
