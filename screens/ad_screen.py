@@ -40,6 +40,13 @@ class AdScreen(MDScreen):
 
     def _swap_ad(self, *a):
         cont = self.ids.ad_container
+        
+        src = next(self._cycle)
+        if not src:
+            cont.source = "assets/images/example1.png"
+            return
+        cont.source = src
+        
         cont.clear_widgets()
         src = next(self._cycle)
         if not src:

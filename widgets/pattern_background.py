@@ -12,6 +12,8 @@ from kivy.metrics import dp
 
 
 class SvgImage(Image):
+    _cache = {}
+
     def __init__(self, source=None, angle=0, **kwargs):
         super().__init__(**kwargs)
         self.angle = angle
@@ -20,6 +22,10 @@ class SvgImage(Image):
         self.bind(pos=self.update_rotation, size=self.update_rotation)
 
     def set_source(self, value):
+        if value in SvgImage._cache:
+            self.texture = SvgImage._cache[value]
+            return
+
         svg_data = open(value, 'rb').read()
         png_data = cairosvg.svg2png(bytestring=svg_data)
         image = PILImage.open(io.BytesIO(png_data)).convert("RGBA")
@@ -29,6 +35,7 @@ class SvgImage(Image):
         texture.flip_vertical()
 
         self.texture = texture
+        SvgImage._cache[value] = texture  # Guardar en cache
 
     def update_rotation(self, *args):
         self.canvas.before.clear()
@@ -38,6 +45,7 @@ class SvgImage(Image):
             Rotate(angle=self.angle, origin=self.center)
         with self.canvas.after:
             PopMatrix()
+
 
 
 class PatternBackground(RelativeLayout):
@@ -50,11 +58,23 @@ class PatternBackground(RelativeLayout):
             self.bg_rect = Rectangle(size=self.size, pos=self.pos)
 
         self.bind(size=self._update_background, pos=self._update_background)
+
+        # Crear íconos iniciales
         Clock.schedule_once(self.add_icons, 0.1)
 
     def _update_background(self, *args):
         self.bg_rect.size = self.size
         self.bg_rect.pos = self.pos
+
+        # Regenerar íconos cuando cambia el tamaño
+        self.regenerate_icons()
+
+    def regenerate_icons(self):
+        # Primero eliminar todos los widgets previos (los íconos viejos)
+        self.clear_widgets()
+
+        # Luego volver a crear el patrón
+        self.add_icons()
 
     def add_icons(self, *args):
         spacing = dp(120)
